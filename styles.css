@@ -453,3 +453,21 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .others-grid { grid-template-columns: 1fr 1fr; }
 }
 .price-card-alt .price-list small { color: var(--band-soft); }
+
+/* ---------- Explicación de servicios ---------- */
+.explain { padding-block: 48px 8px; }
+.xp-grid { display: grid; gap: 14px; }
+.xp { display: grid; gap: 10px; align-content: start; padding: 22px 20px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.xp h3 { font-size: 1.35rem; color: var(--title); margin: 4px 0 0; }
+.xp p { margin: 0; color: var(--ink-soft); }
+.xp-for b { color: var(--ink); font-weight: 600; }
+.xp-ic { width: 52px; height: 52px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; }
+.xp-ic svg { width: 26px; height: 26px; fill: none; stroke: var(--title); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.xp-tags { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.xp-tags li { padding: 4px 12px; border-radius: 999px; font-size: .84rem; background: var(--bg); border: 1px solid var(--line); color: var(--title); }
+.xp-note { margin: 18px 0 0; font-size: .92rem; color: var(--ink-soft); font-style: italic; }
+.hero-jump { margin-top: 8px; }
+@media (min-width: 760px) {
+  .xp-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+  .explain { padding-block: 72px 8px; }
+}
