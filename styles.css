@@ -85,6 +85,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .brand .iso { width: 40px; height: 42px; flex: none; }
 .brand-text { display: grid; line-height: 1.05; }
 .brand-text b { font-family: var(--f-display); font-weight: 400; font-size: 1.3rem; color: var(--title); letter-spacing: -.01em; }
+.brand-text b.wordmark { font-size: 1.85rem; letter-spacing: -.02em; line-height: .9; }
+.brand-foot .brand-text b.wordmark { font-size: 2.2rem; }
 .brand-text small { font-size: .66rem; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); margin-top: 3px; }
 .brand-foot { color: #F8F4EC; }
 .brand-foot .iso { width: 52px; height: 55px; }

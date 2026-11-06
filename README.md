@@ -1,4 +1,4 @@
-# Javiera Miranda · Kinesióloga
+# relieve · Centro kinesiológico (Javiera Miranda, kinesióloga)
 
 Página web de la kinesióloga Javiera Miranda (Coquimbo). Sitio estático en HTML, CSS y JavaScript, sin paso de build. Se publica en Vercel (framework "Other", comandos de build vacíos).
 
