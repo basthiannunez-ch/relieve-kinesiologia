@@ -387,6 +387,13 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   background: var(--btn); color: var(--btn-ink); display: grid; place-items: center; box-shadow: var(--shadow);
 }
 .wa-float svg { width: 28px; height: 28px; fill: currentColor; }
+.ig-float {
+  position: fixed; z-index: 30; width: 48px; height: 48px; border-radius: 50%;
+  right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  background: var(--arena); color: #2F382D; display: grid; place-items: center; box-shadow: var(--shadow);
+}
+.ig-float svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.ig-float .dot { fill: currentColor; stroke: none; }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
