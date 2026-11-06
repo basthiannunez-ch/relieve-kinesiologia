@@ -232,6 +232,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .price { font-family: var(--f-display); font-size: 1.35rem; color: var(--title); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; }
 .price-card-alt .price { color: var(--band-ink); }
 .price-card .btn { justify-self: start; margin-top: 4px; }
+.fonasa { margin-top: 16px; padding: 18px 22px; border-radius: var(--r); border: 1px dashed var(--arena); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; }
+.fonasa p { color: var(--ink-soft); min-width: 0; }
 
 /* ---------- Forma de trabajar ---------- */
 .method { background: var(--surface-2); }
