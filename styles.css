@@ -243,6 +243,21 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .fonasa { margin-top: 16px; padding: 18px 22px; border-radius: var(--r); border: 1px dashed var(--arena); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; }
 .fonasa p { color: var(--ink-soft); min-width: 0; }
 
+/* ---------- Gift card ---------- */
+.gift { background: var(--profundo); color: #F8F4EC; }
+.gift-in { display: grid; gap: 32px; align-items: center; }
+.gift-img { margin: 0; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 50px -28px rgba(0,0,0,.8); border: 1px solid rgba(194,164,131,.3); }
+.gift-img img { width: 100%; }
+.gift-text { display: grid; gap: 16px; min-width: 0; }
+.gift h2 { color: #F8F4EC; }
+.gift h2 em { color: #C2A483; }
+.gift p { color: #D9CBB4; max-width: 40ch; }
+.gift ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; color: #D9CBB4; }
+.gift li { padding-left: 20px; position: relative; }
+.gift li::before { content: ""; position: absolute; left: 0; top: .7em; width: 10px; height: 1.5px; background: #C2A483; }
+.gift .btn { justify-self: start; margin-top: 6px; }
+.terms-note { font-size: .9rem; color: var(--accent); margin-top: -6px; }
+
 /* ---------- Forma de trabajar ---------- */
 .method { background: var(--surface-2); }
 .method-in { display: grid; gap: 28px; text-align: center; justify-items: center; }
@@ -349,8 +364,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @media (min-width: 760px) {
   section { padding-block: 96px; }
   .menu-btn { display: none; }
-  .menu, .menu:not(.open) { position: static; display: flex; align-items: center; gap: 26px; padding: 0; border: 0; background: none; }
-  .menu a { border: 0; padding: 6px 0; font-size: .98rem; }
+  .menu, .menu:not(.open) { position: static; display: flex; align-items: center; gap: 22px; padding: 0; border: 0; background: none; }
+  .menu a { border: 0; padding: 6px 0; font-size: .98rem; white-space: nowrap; }
+  .brand-text b { white-space: nowrap; }
   .menu a.menu-cta { margin: 0; padding: 10px 20px; }
   .hero { padding-block: 64px 72px; }
   .hero-in { grid-template-columns: 1fr 1.1fr; text-align: left; justify-items: start; align-items: center; gap: 56px; }
@@ -365,6 +381,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .care-grid { grid-template-columns: repeat(3, 1fr); }
   .t-list { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
   .price-grid { grid-template-columns: 1.3fr 1fr; }
+  .gift-in { grid-template-columns: 1.1fr 1fr; gap: 56px; }
   .terms ul { grid-template-columns: 1fr 1fr; gap: 6px 32px; }
   .prices { padding-top: 0; }
   .foot-in { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; }
