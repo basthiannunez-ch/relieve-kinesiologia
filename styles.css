@@ -165,7 +165,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   margin: 0 auto; width: min(86%, 380px); border: 6px solid var(--verde); border-radius: 22px;
   overflow: hidden; transform: rotate(-1.5deg); box-shadow: var(--shadow);
 }
-.photo-frame img { width: 100%; aspect-ratio: 47 / 51; object-fit: cover; }
+.photo-frame img { width: 100%; aspect-ratio: 3 / 4; object-position: 50% 30%; object-fit: cover; }
 .about-text { display: grid; gap: 16px; min-width: 0; }
 .about-text > p { color: var(--ink-soft); }
 .sub { font-size: 1.9rem; margin-top: 24px; }
@@ -204,6 +204,24 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .card li { padding-left: 20px; position: relative; }
 .card li::before { content: ""; position: absolute; left: 0; top: .7em; width: 10px; height: 1.5px; background: var(--arena); }
 .card .link { margin-top: auto; }
+
+
+/* ---------- Valores ---------- */
+.prices { padding-top: 0; }
+.price-grid { display: grid; gap: 16px; }
+.price-card { display: grid; gap: 16px; align-content: start; padding: 26px 22px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.price-card-alt { background: var(--band); color: var(--band-ink); border-color: transparent; }
+.price-card-alt .card-tag { color: var(--band-soft); }
+.price-card-alt b { color: var(--band-ink); }
+.group-note { color: var(--band-soft); font-size: .95rem; margin-top: -8px; }
+.price-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.price-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); }
+.price-card-alt .price-list li { border-top-color: rgba(194, 164, 131, .35); }
+.price-list li div { min-width: 0; }
+.price-list small { display: block; color: var(--ink-soft); font-size: .88rem; line-height: 1.45; margin-top: 2px; }
+.price { font-family: var(--f-display); font-size: 1.35rem; color: var(--title); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; }
+.price-card-alt .price { color: var(--band-ink); }
+.price-card .btn { justify-self: start; margin-top: 4px; }
 
 /* ---------- Forma de trabajar ---------- */
 .method { background: var(--surface-2); }
@@ -289,6 +307,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .photo-frame { position: sticky; top: 110px; width: 100%; }
   .cards { grid-template-columns: repeat(3, 1fr); }
   .care-grid { grid-template-columns: repeat(3, 1fr); }
+  .price-grid { grid-template-columns: 1.3fr 1fr; }
+  .prices { padding-top: 0; }
   .foot-in { grid-template-columns: auto 1fr auto; align-items: center; gap: 40px; }
   .foot { padding-block: 40px; }
 }
