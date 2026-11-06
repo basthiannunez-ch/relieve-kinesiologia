@@ -104,6 +104,15 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .menu a { text-decoration: none; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 1.05rem; }
 .menu a.menu-cta { border: 0; margin-top: 12px; text-align: center; background: var(--btn); color: var(--btn-ink); border-radius: 999px; font-weight: 500; }
 
+/* ---------- Franja en movimiento ---------- */
+.ticker { display: block; overflow: hidden; background: var(--arena); color: #2F382D; text-decoration: none; border-bottom: 1px solid var(--line); }
+.ticker-track { display: flex; width: max-content; animation: ticker 38s linear infinite; }
+.ticker:hover .ticker-track, .ticker:focus-visible .ticker-track { animation-play-state: paused; }
+.ticker-group { display: flex; align-items: center; gap: 22px; padding: 9px 11px; white-space: nowrap; font-size: .9rem; font-weight: 500; letter-spacing: .02em; }
+.ticker-group i { font-style: normal; font-size: .6rem; opacity: .7; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } .ticker { overflow-x: auto; } }
+
 /* ---------- Botones ---------- */
 .actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .actions.center { justify-content: center; }
