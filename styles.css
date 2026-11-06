@@ -234,6 +234,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .price { font-family: var(--f-display); font-size: 1.35rem; color: var(--title); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; }
 .price-card-alt .price { color: var(--band-ink); }
 .price-card .btn { justify-self: start; margin-top: 4px; }
+.massages { padding-top: 32px; }
+.terms { margin-top: 16px; padding: 22px; border-radius: var(--r); background: var(--surface-2); display: grid; gap: 10px; }
+.terms h3 { font-size: 1.3rem; }
+.terms ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; color: var(--ink-soft); }
+.terms li { padding-left: 20px; position: relative; }
+.terms li::before { content: ""; position: absolute; left: 0; top: .7em; width: 10px; height: 1.5px; background: var(--arena); }
 .fonasa { margin-top: 16px; padding: 18px 22px; border-radius: var(--r); border: 1px dashed var(--arena); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; }
 .fonasa p { color: var(--ink-soft); min-width: 0; }
 
@@ -336,6 +342,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .cards { grid-template-columns: repeat(3, 1fr); }
   .care-grid { grid-template-columns: repeat(3, 1fr); }
   .price-grid { grid-template-columns: 1.3fr 1fr; }
+  .terms ul { grid-template-columns: 1fr 1fr; gap: 6px 32px; }
   .prices { padding-top: 0; }
   .foot-in { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; }
   .foot { padding-block: 56px 40px; }
