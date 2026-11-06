@@ -1,4 +1,4 @@
-// Javiera Miranda · Kinesióloga
+// relieve · Centro kinesiológico
 // Cuando Javiera confirme sus datos, basta con cambiar estas dos líneas.
 const WHATSAPP = "56995729398";   // ej. "56912345678" (sin + ni espacios)
 const INSTAGRAM = "kinejavimiranda";  // ej. "kinejavimiranda" (sin @)
@@ -36,7 +36,7 @@ if (INSTAGRAM) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.ta
     const mins = parseInt(get("hour"), 10) * 60 + parseInt(get("minute"), 10);
     const sunday = day.startsWith("dom");
     const open = !sunday && ((mins >= 540 && mins < 720) || (mins >= 1020 && mins < 1200));
-    el.textContent = open ? "Abierto ahora" : sunday ? "Hoy domingo, cerrado. Escríbeme y coordinamos." : "Fuera de horario. Escríbeme y te respondo apenas pueda.";
+    el.textContent = open ? "Abierto ahora" : sunday ? "Hoy domingo, cerrado. Escríbenos y coordinamos." : "Fuera de horario. Escríbenos y te respondemos apenas podamos.";
     el.classList.toggle("open", open);
     el.hidden = false;
   } catch (e) { /* sin aviso */ }
@@ -77,7 +77,7 @@ if (INSTAGRAM) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.ta
       const r = await fetch("/api/testimonios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       const out = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(out.error || "No se pudo enviar.");
-      form.reset(); msg.textContent = "¡Gracias! Tu testimonio se publicará cuando Javiera lo revise.";
+      form.reset(); msg.textContent = "¡Gracias! Tu testimonio se publicará cuando lo revisemos.";
     } catch (err) {
       msg.textContent = err.message || "No se pudo enviar. Intenta de nuevo."; msg.classList.add("err");
     } finally { btn.disabled = false; }
