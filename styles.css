@@ -388,11 +388,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 }
 .wa-float svg { width: 28px; height: 28px; fill: currentColor; }
 .ig-float {
-  position: fixed; z-index: 30; width: 48px; height: 48px; border-radius: 50%;
-  right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  position: fixed; z-index: 30; width: 56px; height: 56px; border-radius: 50%;
+  right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(84px + env(safe-area-inset-bottom, 0px));
   background: var(--arena); color: #2F382D; display: grid; place-items: center; box-shadow: var(--shadow);
 }
-.ig-float svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.ig-float svg { width: 27px; height: 27px; fill: none; stroke: currentColor; stroke-width: 1.8; }
 .ig-float .dot { fill: currentColor; stroke: none; }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -418,6 +418,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .care-grid { grid-template-columns: repeat(3, 1fr); }
   .t-list { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
   .price-grid { grid-template-columns: 1.3fr 1fr; }
+  .price-grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
   .gift-in { grid-template-columns: 1.1fr 1fr; gap: 56px; }
   .terms ul { grid-template-columns: 1fr 1fr; gap: 6px 32px; }
   .prices { padding-top: 0; }
@@ -427,3 +428,28 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .when-list { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 759px) { .sprig-hero { display: none; } }
+
+/* ---------- Páginas de servicios ---------- */
+.page-hero { padding-block: 40px 28px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.page-hero-in { display: grid; gap: 12px; }
+.page-hero h1 { font-size: clamp(2.4rem, 10vw, 3.8rem); color: var(--title); margin: 0; line-height: 1.05; }
+.page-hero h1 em { display: block; font-size: .55em; color: var(--accent); }
+.page-hero .lead { max-width: 40ch; }
+.crumbs { display: flex; gap: 8px; font-size: .88rem; color: var(--ink-soft); }
+.crumbs a { color: var(--accent); text-decoration: none; }
+.prices.first { padding-top: 48px; }
+.terms-sec { padding-top: 0; }
+.terms-sec .terms { margin-top: 0; }
+.others { padding-block: 24px 56px; }
+.others-t { font-size: 1.8rem; margin-bottom: 18px; }
+.others-grid { display: grid; gap: 12px; }
+.other { display: grid; gap: 2px; padding: 18px 20px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+.other b { font-family: var(--f-display); font-weight: 500; font-size: 1.3rem; color: var(--title); }
+.other small { color: var(--ink-soft); }
+.other::after { content: "Ver servicio →"; margin-top: 6px; font-size: .9rem; color: var(--accent); font-weight: 500; }
+.menu a[aria-current="page"] { color: var(--accent); }
+@media (min-width: 760px) {
+  .page-hero { padding-block: 72px 48px; }
+  .others-grid { grid-template-columns: 1fr 1fr; }
+}
+.price-card-alt .price-list small { color: var(--band-soft); }

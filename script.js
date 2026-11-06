@@ -24,7 +24,7 @@ document.querySelectorAll("[data-wa]").forEach((a) => {
 });
 document.querySelectorAll(".ig-foot").forEach((a) => { if (INSTAGRAM) { a.href = "https://www.instagram.com/" + INSTAGRAM + "/"; a.target = "_blank"; a.rel = "noopener"; } });
 const ig = document.getElementById("ig-link");
-if (INSTAGRAM) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.target = "_blank"; ig.rel = "noopener"; }
+if (INSTAGRAM && ig) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.target = "_blank"; ig.rel = "noopener"; }
 
 // "Abierto ahora" según la hora de Chile
 (function () {
