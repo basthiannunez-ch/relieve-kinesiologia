@@ -1,7 +1,7 @@
 // relieve · boceto
 // Cuando Javiera confirme sus datos, basta con cambiar estas dos líneas.
-const WHATSAPP = "";   // ej. "56912345678" (sin + ni espacios)
-const INSTAGRAM = "";  // ej. "relieve.kine" (sin @)
+const WHATSAPP = "56995729398";   // ej. "56912345678" (sin + ni espacios)
+const INSTAGRAM = "kinejavimiranda";  // ej. "relieve.kine" (sin @)
 
 document.documentElement.classList.add("js");
 
@@ -24,8 +24,7 @@ document.querySelectorAll("[data-wa]").forEach((a) => {
 });
 document.querySelectorAll(".ig-foot").forEach((a) => { if (INSTAGRAM) { a.href = "https://www.instagram.com/" + INSTAGRAM + "/"; a.target = "_blank"; a.rel = "noopener"; } });
 const ig = document.getElementById("ig-link");
-if (INSTAGRAM) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.target = "_blank"; ig.rel = "noopener"; ig.textContent = "@" + INSTAGRAM; }
-if (WHATSAPP && INSTAGRAM) document.getElementById("pending").hidden = true;
+if (INSTAGRAM) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.target = "_blank"; ig.rel = "noopener"; }
 
 // "Abierto ahora" según la hora de Chile
 (function () {

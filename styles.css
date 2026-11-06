@@ -213,6 +213,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .card li { padding-left: 20px; position: relative; }
 .card li::before { content: ""; position: absolute; left: 0; top: .7em; width: 10px; height: 1.5px; background: var(--arena); }
 .card .link { margin-top: auto; }
+.soon { font-size: .92rem; color: var(--ink-soft); padding: 10px 14px; border-radius: 12px; background: var(--surface-2); }
 
 
 /* ---------- Valores ---------- */
@@ -278,7 +279,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .contact h2 { color: var(--band-ink); }
 .contact h2 em { color: var(--band-soft); }
 .contact p { color: var(--band-soft); max-width: 34ch; }
-.pending { font-size: .85rem; border: 1px dashed var(--band-soft); border-radius: 10px; padding: 8px 14px; }
+.contact-data { font-size: .95rem; letter-spacing: .02em; font-variant-numeric: tabular-nums; user-select: all; }
 
 /* ---------- Footer ---------- */
 .foot { background: #2F382D; color: #D9CBB4; padding-block: 44px 96px; }
