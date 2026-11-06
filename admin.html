@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Testimonios · Panel privado</title>
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Jost:wght@400;500&display=swap">
+<style>
+  :root { --bg:#F8F4EC; --card:#FFFDF8; --ink:#2F382D; --soft:#5E6659; --verde:#4A5745; --arena:#C2A483; --line:#E2D8C6; --rojo:#A2463A; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "Jost", system-ui, sans-serif; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px max(16px, env(safe-area-inset-right, 0px)) 64px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 24px; }
+  h1, h2 { font-family: "Fraunces", Georgia, serif; font-weight: 400; color: var(--verde); margin: 0; }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+  .count { font: 500 .8rem "Jost", sans-serif; background: var(--arena); color: var(--ink); border-radius: 999px; padding: 2px 10px; }
+  .login { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  input { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); min-width: 0; flex: 1 1 220px; }
+  button { font: inherit; font-weight: 500; border: 0; border-radius: 999px; padding: 10px 20px; cursor: pointer; background: var(--verde); color: var(--bg); }
+  button.ghost { background: none; border: 1px solid var(--line); color: var(--ink); }
+  button.danger { background: none; border: 1px solid var(--rojo); color: var(--rojo); }
+  button[disabled] { opacity: .5; cursor: wait; }
+  .list { display: grid; gap: 12px; }
+  .item { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 10px; }
+  .item p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .meta { font-size: .88rem; color: var(--soft); }
+  .meta b { color: var(--ink); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .empty { color: var(--soft); }
+  .msg { color: var(--rojo); font-weight: 500; min-height: 1.4em; }
+  .hint { color: var(--soft); font-size: .9rem; margin: 0; }
+  a { color: var(--verde); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Testimonios</h1>
+    <p class="hint">Panel privado de Javiera Miranda. Aprueba lo que quieres que se vea en la página y elimina el resto. <a href="/">Volver a la página</a></p>
+  </header>
+
+  <form class="login" id="login">
+    <label for="key" hidden>Clave</label>
+    <input id="key" type="password" placeholder="Escribe la clave del panel" autocomplete="current-password">
+    <button type="submit">Entrar</button>
+    <button type="button" class="ghost" id="salir" hidden>Salir</button>
+  </form>
+  <p class="msg" id="msg" role="status"></p>
+
+  <section id="panel" hidden>
+    <div style="display:grid;gap:12px">
+      <h2>Por revisar <span class="count" id="n-pend">0</span></h2>
+      <div class="list" id="pendientes"></div>
+    </div>
+    <div style="display:grid;gap:12px;margin-top:32px">
+      <h2>Publicados <span class="count" id="n-apr">0</span></h2>
+      <div class="list" id="aprobados"></div>
+    </div>
+  </section>
+</div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  let KEY = "";
+  try { KEY = sessionStorage.getItem("adm") || ""; } catch (e) {}
+
+  async function api(method, body) {
+    const r = await fetch("/api/admin", { method, headers: { "x-admin-key": KEY, "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
+    const out = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(out.error || "Error"), { status: r.status });
+    return out;
+  }
+  const fecha = (d) => { try { return new Date(d).toLocaleString("es-CL", { dateStyle: "medium", timeStyle: "short" }); } catch (e) { return ""; } };
+
+  function item(t, pend) {
+    const el = document.createElement("article"); el.className = "item";
+    const p = document.createElement("p"); p.textContent = t.texto;
+    const m = document.createElement("div"); m.className = "meta";
+    const b = document.createElement("b"); b.textContent = t.nombre;
+    m.append(b, document.createTextNode([t.servicio, fecha(t.fecha)].filter(Boolean).map((x) => " · " + x).join("")));
+    const row = document.createElement("div"); row.className = "row";
+    if (pend) { const ok = document.createElement("button"); ok.textContent = "Aprobar y publicar"; ok.onclick = () => act("aprobar", t.url, row); row.append(ok); }
+    const del = document.createElement("button"); del.className = "danger"; del.textContent = pend ? "Eliminar" : "Quitar de la página";
+    del.onclick = () => {
+      if (del.dataset.confirm) return act("eliminar", t.url, row);
+      del.dataset.confirm = "1"; del.textContent = "Toca otra vez para confirmar";
+      setTimeout(() => { delete del.dataset.confirm; del.textContent = pend ? "Eliminar" : "Quitar de la página"; }, 4000);
+    };
+    row.append(del);
+    el.append(p, m, row); return el;
+  }
+
+  async function act(accion, url, row) {
+    row.querySelectorAll("button").forEach((b) => (b.disabled = true));
+    try { await api("POST", { accion, url }); await cargar(); }
+    catch (e) { $("msg").textContent = e.message; row.querySelectorAll("button").forEach((b) => (b.disabled = false)); }
+  }
+
+  async function cargar() {
+    $("msg").textContent = "";
+    try {
+      const { pendientes, aprobados } = await api("GET");
+      try { sessionStorage.setItem("adm", KEY); } catch (e) {}
+      $("panel").hidden = false; $("salir").hidden = false; $("key").hidden = true; $("login").querySelector("button[type=submit]").hidden = true;
+      $("n-pend").textContent = pendientes.length; $("n-apr").textContent = aprobados.length;
+      const P = $("pendientes"), A = $("aprobados"); P.replaceChildren(); A.replaceChildren();
+      if (!pendientes.length) P.innerHTML = '<p class="empty">No hay testimonios nuevos.</p>';
+      if (!aprobados.length) A.innerHTML = '<p class="empty">Todavía no hay testimonios publicados.</p>';
+      pendientes.forEach((t) => P.append(item(t, true)));
+      aprobados.forEach((t) => A.append(item(t, false)));
+    } catch (e) {
+      $("panel").hidden = true;
+      $("msg").textContent = e.status === 401 ? "Clave incorrecta. Revísala e intenta de nuevo." : "No se pudo cargar: " + e.message;
+    }
+  }
+
+  $("login").addEventListener("submit", (e) => { e.preventDefault(); KEY = $("key").value.trim(); if (KEY) cargar(); });
+  $("salir").onclick = () => { try { sessionStorage.removeItem("adm"); } catch (e) {} location.reload(); };
+  if (KEY) cargar();
+</script>
+</body>
+</html>

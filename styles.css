@@ -251,6 +251,28 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .method-mix { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 10px; color: var(--ink-soft); }
 .method-mix li[aria-hidden] { color: var(--arena); }
 
+/* ---------- Testimonios ---------- */
+.testimonials { background: var(--surface); }
+.t-list { display: grid; gap: 16px; margin-bottom: 24px; }
+.t-card { margin: 0; padding: 24px 22px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); display: grid; gap: 14px; min-width: 0; }
+.t-card blockquote { margin: 0; font-family: var(--f-display); font-size: 1.15rem; line-height: 1.45; color: var(--title); overflow-wrap: anywhere; }
+.t-card figcaption { font-size: .9rem; color: var(--ink-soft); }
+.t-card figcaption b { color: var(--ink); }
+.t-empty { color: var(--ink-soft); padding: 22px; border: 1px dashed var(--line); border-radius: var(--r); }
+.t-form-wrap > summary { list-style: none; cursor: pointer; display: inline-flex; }
+.t-form-wrap > summary::-webkit-details-marker { display: none; }
+.t-form-wrap[open] > summary { display: none; }
+.t-form { display: grid; gap: 8px; max-width: 34rem; padding: 24px 22px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); }
+.t-form label { font-weight: 500; color: var(--title); margin-top: 8px; }
+.t-form input, .t-form select, .t-form textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; width: 100%; }
+.t-form textarea { resize: vertical; }
+.t-form button { justify-self: start; margin-top: 12px; border: 0; cursor: pointer; font: inherit; font-weight: 500; }
+.t-form button[disabled] { opacity: .6; cursor: wait; }
+.t-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.t-msg { font-weight: 500; color: var(--title); min-height: 1.4em; }
+.t-msg.err { color: #A2463A; }
+.t-note { font-size: .85rem; color: var(--ink-soft); }
+
 /* ---------- Atención ---------- */
 .care-grid { display: grid; gap: 16px; }
 .mode, .hours { padding: 26px 22px; border-radius: var(--r); display: grid; gap: 12px; align-content: start; min-width: 0; }
@@ -341,6 +363,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   .photo-frame { position: sticky; top: 110px; width: 100%; }
   .cards { grid-template-columns: repeat(3, 1fr); }
   .care-grid { grid-template-columns: repeat(3, 1fr); }
+  .t-list { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
   .price-grid { grid-template-columns: 1.3fr 1fr; }
   .terms ul { grid-template-columns: 1fr 1fr; gap: 6px 32px; }
   .prices { padding-top: 0; }

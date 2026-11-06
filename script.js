@@ -42,4 +42,46 @@ if (INSTAGRAM) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.ta
   } catch (e) { /* sin aviso */ }
 })();
 
+// Testimonios
+(function () {
+  const list = document.getElementById("t-list");
+  const empty = document.getElementById("t-empty");
+  const form = document.getElementById("t-form");
+  const msg = document.getElementById("t-msg");
+  if (!list || !form) return;
+  const fmt = (d) => { try { return new Date(d).toLocaleDateString("es-CL", { month: "long", year: "numeric" }); } catch (e) { return ""; } };
+  fetch("/api/testimonios", { cache: "no-store" })
+    .then((r) => (r.ok ? r.json() : []))
+    .then((items) => {
+      if (!Array.isArray(items) || !items.length) return;
+      empty.hidden = true;
+      items.forEach((t) => {
+        const fig = document.createElement("figure"); fig.className = "t-card";
+        const q = document.createElement("blockquote"); q.textContent = "“" + t.texto + "”";
+        const cap = document.createElement("figcaption");
+        const b = document.createElement("b"); b.textContent = t.nombre;
+        cap.append(b, document.createTextNode([t.servicio, fmt(t.fecha)].filter(Boolean).map((x) => " · " + x).join("")));
+        fig.append(q, cap); list.append(fig);
+      });
+    })
+    .catch(() => {});
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    msg.className = "t-msg";
+    if ((data.nombre || "").trim().length < 2 || (data.texto || "").trim().length < 10) {
+      msg.textContent = "Escribe tu nombre y un testimonio de al menos 10 letras."; msg.classList.add("err"); return;
+    }
+    const btn = form.querySelector("button"); btn.disabled = true; msg.textContent = "Enviando…";
+    try {
+      const r = await fetch("/api/testimonios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const out = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(out.error || "No se pudo enviar.");
+      form.reset(); msg.textContent = "¡Gracias! Tu testimonio se publicará cuando Javiera lo revise.";
+    } catch (err) {
+      msg.textContent = err.message || "No se pudo enviar. Intenta de nuevo."; msg.classList.add("err");
+    } finally { btn.disabled = false; }
+  });
+})();
+
 document.getElementById("year").textContent = new Date().getFullYear();

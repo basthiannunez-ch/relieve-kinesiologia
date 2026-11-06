@@ -34,6 +34,7 @@
       <a href="#cuando">¿Cuándo consultar?</a>
       <a href="#valores">Valores</a>
       <a href="#masajes">Masajes</a>
+      <a href="#testimonios">Testimonios</a>
       <a href="#atencion">Atención</a>
       <a href="#preguntas">Preguntas</a>
       <a href="#contacto" class="menu-cta">Agendar hora</a>
@@ -256,6 +257,40 @@
           <li>Terapia manual</li><li aria-hidden="true">+</li><li>Ejercicio</li><li aria-hidden="true">+</li><li>Bienestar</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="testimonials" id="testimonios">
+    <div class="wrap">
+      <header class="sec-head">
+        <h2><em>Lo que dicen</em> mis pacientes</h2>
+        <p>Experiencias reales de personas que se atendieron conmigo.</p>
+      </header>
+      <div class="t-list" id="t-list">
+        <p class="t-empty" id="t-empty">Aún no hay testimonios publicados. Si ya te atendiste conmigo, cuéntame cómo te fue.</p>
+      </div>
+      <details class="t-form-wrap" id="t-form-wrap">
+        <summary class="btn btn-ghost">Dejar mi testimonio</summary>
+        <form class="t-form" id="t-form" novalidate>
+          <label for="t-nombre">Tu nombre</label>
+          <input id="t-nombre" name="nombre" maxlength="60" autocomplete="given-name" placeholder="Ej. Carolina M." required>
+          <label for="t-servicio">¿Qué tratamiento hiciste?</label>
+          <select id="t-servicio" name="servicio">
+            <option value="">Prefiero no decir</option>
+            <option>Kinesiología</option>
+            <option>Sesiones grupales</option>
+            <option>Masaje</option>
+            <option>Atención online</option>
+          </select>
+          <label for="t-texto">Tu testimonio</label>
+          <textarea id="t-texto" name="texto" rows="5" maxlength="800" placeholder="Cuéntanos cómo te sentiste y qué cambió" required></textarea>
+          <input class="t-trap" id="t-sitio" name="sitio" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button class="btn btn-main" type="submit">Enviar testimonio</button>
+          <p class="t-msg" id="t-msg" role="status"></p>
+          <p class="t-note">Javiera revisa cada testimonio antes de publicarlo.</p>
+        </form>
+      </details>
     </div>
   </section>
 
