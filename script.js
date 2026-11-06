@@ -1,7 +1,7 @@
-// relieve · boceto
+// Javiera Miranda · Kinesióloga
 // Cuando Javiera confirme sus datos, basta con cambiar estas dos líneas.
 const WHATSAPP = "56995729398";   // ej. "56912345678" (sin + ni espacios)
-const INSTAGRAM = "kinejavimiranda";  // ej. "relieve.kine" (sin @)
+const INSTAGRAM = "kinejavimiranda";  // ej. "kinejavimiranda" (sin @)
 
 document.documentElement.classList.add("js");
 

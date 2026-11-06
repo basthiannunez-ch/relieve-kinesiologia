@@ -1,4 +1,4 @@
-/* relieve · boceto. Celular primero: una columna, bandas a todo el ancho que alternan crema / verde; en escritorio se abren a dos o tres columnas. */
+/* Javiera Miranda · Kinesióloga. Celular primero: una columna, bandas a todo el ancho que alternan crema / verde; en escritorio se abren a dos o tres columnas. */
 :root {
   --verde: #4A5745;        /* salvia del logo: títulos, botones */
   --arena: #C2A483;        /* arco del logo: acentos, líneas */
@@ -34,8 +34,6 @@
     --shadow: 0 10px 30px -18px rgba(0, 0, 0, .7);
     color-scheme: dark;
   }
-  :root:not([data-theme="light"]) .logo-light { display: none; }
-  :root:not([data-theme="light"]) .logo-dark { display: block; }
 }
 :root[data-theme="dark"] {
   --bg: #232A22; --surface: #2B3329; --surface-2: #323B30;
@@ -45,8 +43,6 @@
   --shadow: 0 10px 30px -18px rgba(0, 0, 0, .7);
   color-scheme: dark;
 }
-:root[data-theme="dark"] .logo-light { display: none; }
-:root[data-theme="dark"] .logo-dark { display: block; }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 76px; }
@@ -85,9 +81,15 @@ section { padding-block: 64px; }
 }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--bg); }
 .top-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
-.brand { display: block; width: 150px; margin-left: -8px; }
-.brand img { width: 100%; }
-.logo-dark { display: none; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--title); }
+.brand .iso { width: 40px; height: 42px; flex: none; }
+.brand-text { display: grid; line-height: 1.05; }
+.brand-text b { font-family: var(--f-display); font-weight: 400; font-size: 1.3rem; color: var(--title); letter-spacing: -.01em; }
+.brand-text small { font-size: .66rem; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); margin-top: 3px; }
+.brand-foot { color: #F8F4EC; }
+.brand-foot .iso { width: 52px; height: 55px; }
+.brand-foot .brand-text b { color: #F8F4EC; font-size: 1.6rem; }
+.brand-foot .brand-text small { color: #C2A483; }
 .menu-btn {
   width: 44px; height: 44px; border: 0; background: none; padding: 0; cursor: pointer;
   display: grid; place-content: center; gap: 7px; color: var(--title);
@@ -287,7 +289,6 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .foot { background: #2F382D; color: #D9CBB4; padding-block: 44px 96px; }
 .foot-in { display: grid; gap: 28px; }
 .foot-brand { display: grid; gap: 6px; }
-.foot-brand img { width: 220px; margin-left: -10px; }
 .foot-col { display: grid; gap: 6px; align-content: start; font-size: .95rem; }
 .foot-col h3 { font-family: var(--f-body); font-size: .75rem; letter-spacing: .2em; text-transform: uppercase; color: #C2A483; font-weight: 500; margin-bottom: 4px; }
 .foot-col a { text-decoration: none; color: #F8F4EC; }
@@ -319,7 +320,6 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* ---------- Tablet / escritorio ---------- */
 @media (min-width: 760px) {
   section { padding-block: 96px; }
-  .brand { width: 170px; }
   .menu-btn { display: none; }
   .menu, .menu:not(.open) { position: static; display: flex; align-items: center; gap: 26px; padding: 0; border: 0; background: none; }
   .menu a { border: 0; padding: 6px 0; font-size: .98rem; }
