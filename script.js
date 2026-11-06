@@ -22,6 +22,7 @@ document.querySelectorAll("[data-wa]").forEach((a) => {
   a.href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(a.dataset.wa);
   a.target = "_blank"; a.rel = "noopener";
 });
+document.querySelectorAll(".ig-foot").forEach((a) => { if (INSTAGRAM) { a.href = "https://www.instagram.com/" + INSTAGRAM + "/"; a.target = "_blank"; a.rel = "noopener"; } });
 const ig = document.getElementById("ig-link");
 if (INSTAGRAM) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/"; ig.target = "_blank"; ig.rel = "noopener"; ig.textContent = "@" + INSTAGRAM; }
 if (WHATSAPP && INSTAGRAM) document.getElementById("pending").hidden = true;
