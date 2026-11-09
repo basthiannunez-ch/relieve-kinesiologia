@@ -583,3 +583,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .toast.show { opacity: 1; visibility: visible; }
 @media (max-width: 420px) { .top .brand-text small { display: none; } }
 button.btn { font: inherit; font-weight: 500; border: 0; cursor: pointer; }
+nav.pillars { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 8px 0 10px; }
+nav.pillars a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--title); font-size: 1.05rem; font-weight: 500; text-decoration: none; transition: background .2s, color .2s, transform .2s; }
+nav.pillars a::after { content: "→"; color: var(--accent); }
+nav.pillars a:hover { background: var(--btn); color: var(--btn-ink); transform: translateY(-1px); }
+nav.pillars a:hover::after { color: inherit; }
