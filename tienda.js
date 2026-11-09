@@ -115,7 +115,7 @@
       list.append(row);
     });
     const tot = el("div", "cart-total"); tot.append(el("span", null, "Total"), el("b", null, clp(total())));
-    const note = el("p", "cart-note", "Te confirmamos día y hora por WhatsApp. Cada hora se reserva con un abono de $10.000 y entregamos boleta.");
+    const note = el("p", "cart-note", "Te confirmamos día y hora por WhatsApp. Cada hora se reserva con un abono de $10.000.");
     const send = el("a", "btn btn-main cart-send", "Enviar pedido por WhatsApp");
     const lines = cart.map((i) => "• " + i.qty + " x " + byId[i.id].nombre + " (" + clp(byId[i.id].precio * i.qty) + ")");
     send.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Hola relieve, quiero agendar estos servicios 🌿\n" + lines.join("\n") + "\nTotal: " + clp(total()) + "\n¿Qué horarios tienen disponibles?");
