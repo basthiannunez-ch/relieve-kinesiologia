@@ -120,10 +120,31 @@
     const lines = cart.map((i) => "• " + i.qty + " x " + byId[i.id].nombre + " (" + clp(byId[i.id].precio * i.qty) + ")");
     send.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Hola relieve, quiero agendar estos servicios 🌿\n" + lines.join("\n") + "\nTotal: " + clp(total()) + "\n¿Qué horarios tienen disponibles?");
     send.target = "_blank"; send.rel = "noopener";
+    if (pagoActivo) {
+      const unidades = cart.reduce((t, i) => t + i.qty, 0);
+      const pay = el("div", "pay-box");
+      pay.append(el("p", "pay-title", "Paga en línea con Mercado Pago"));
+      const bAbono = el("button", "btn btn-main", "Pagar abono · " + clp(10000 * unidades)); bAbono.type = "button";
+      const bTotal = el("button", "btn btn-ghost", "Pagar total · " + clp(total())); bTotal.type = "button";
+      const msg = el("p", "pay-msg"); msg.setAttribute("role", "status");
+      const go = async (modo, b) => {
+        [bAbono, bTotal].forEach((x) => (x.disabled = true)); msg.textContent = "Abriendo Mercado Pago…";
+        try {
+          const r = await fetch("/api/pago", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ modo, items: cart }) });
+          const out = await r.json().catch(() => ({}));
+          if (!r.ok || !out.url) throw new Error(out.error || "No pudimos iniciar el pago.");
+          location.href = out.url;
+        } catch (e) { msg.textContent = e.message; [bAbono, bTotal].forEach((x) => (x.disabled = false)); }
+      };
+      bAbono.onclick = () => go("abono", bAbono); bTotal.onclick = () => go("total", bTotal);
+      pay.append(bAbono, bTotal, el("p", "cart-note", "El abono es de $10.000 por cada servicio y reserva tu hora; el resto se paga en la consulta."), msg);
+      foot.append(pay);
+      send.className = "btn btn-ghost cart-send"; send.textContent = "O coordina por WhatsApp";
+    }
     const clear = el("button", "link-btn", "Vaciar carrito"); clear.type = "button"; clear.onclick = () => { cart = []; save(); renderCart(); };
-    foot.append(tot, note, send, clear);
+    foot.prepend(tot, note); foot.append(send, clear);
   }
-  bCart.onclick = () => { renderCart(); open(C); };
+  bCart.onclick = () => { renderCart(); open(C); document.querySelector(".toast")?.classList.remove("show"); };
 
   // ---- Aviso ----
   const t = el("div", "toast"); t.setAttribute("role", "status"); document.body.append(t);
@@ -140,6 +161,17 @@
     const b = addBtn(s); b.setAttribute("aria-label", "Agregar " + s.nombre + " al carrito");
     li.append(b);
   });
+
+  // ---- Pago en línea (se activa solo cuando Mercado Pago está configurado) ----
+  let pagoActivo = false;
+  fetch("/api/pago", { cache: "no-store" }).then((r) => (r.ok ? r.json() : {})).then((d) => { pagoActivo = Boolean(d && d.activo); renderCart(); }).catch(() => {});
+  const estado = new URLSearchParams(location.search).get("pago");
+  if (estado) {
+    const txt = { ok: "¡Pago recibido! Te escribiremos por WhatsApp para confirmar tu hora.", pendiente: "Tu pago quedó pendiente. Te avisaremos cuando se confirme.", error: "El pago no se completó. Puedes intentarlo de nuevo o escribirnos por WhatsApp." }[estado];
+    if (estado === "ok") { cart = []; save(); }
+    if (txt) setTimeout(() => { t.replaceChildren(el("span", null, txt)); t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 7000); }, 400);
+    history.replaceState(null, "", location.pathname + location.hash);
+  }
 
   renderCart();
 })();

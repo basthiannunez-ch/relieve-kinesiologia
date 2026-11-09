@@ -1,6 +1,7 @@
 // Catálogo de servicios de relieve. Para cambiar un precio o agregar un servicio, edita esta lista.
+// Lo usa la página (carrito) y también el pago en línea (api/pago.js), así los precios no se pueden alterar desde el navegador.
 // cat: "kinesiologia" | "kinestetica" | "bienestar"
-window.CATALOGO = [
+globalThis.CATALOGO = [
   { id: "kine-1", nombre: "Sesión de kinesiología", detalle: "50 min · presencial", precio: 35000, cat: "kinesiologia", claves: "dolor espalda cuello hombro lesion rehabilitacion terapia manual evaluacion" },
   { id: "kine-5", nombre: "Pack 5 sesiones de kinesiología", detalle: "$30.000 por sesión", precio: 150000, cat: "kinesiologia", claves: "pack paquete rehabilitacion" },
   { id: "kine-10", nombre: "Pack 10 sesiones de kinesiología", detalle: "$25.000 por sesión", precio: 250000, cat: "kinesiologia", claves: "pack paquete rehabilitacion" },
@@ -25,7 +26,7 @@ window.CATALOGO = [
   { id: "puncion", nombre: "Punción seca", detalle: "30 min", precio: 25000, cat: "bienestar", claves: "aguja puntos gatillo dolor muscular" },
   { id: "presoterapia", nombre: "Presoterapia", detalle: "30 min", precio: 25000, cat: "bienestar", claves: "piernas circulacion botas retencion" },
 ];
-window.CATEGORIAS = {
+globalThis.CATEGORIAS = {
   kinesiologia: { nombre: "Kinesiología", url: "/kinesiologia" },
   kinestetica: { nombre: "Kinestética", url: "/kinestetica" },
   bienestar: { nombre: "Masajes y bienestar", url: "/bienestar" },

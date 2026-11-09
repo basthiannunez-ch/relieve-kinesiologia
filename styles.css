@@ -588,3 +588,9 @@ nav.pillars a { display: inline-flex; align-items: center; gap: 8px; padding: 12
 nav.pillars a::after { content: "→"; color: var(--accent); }
 nav.pillars a:hover { background: var(--btn); color: var(--btn-ink); transform: translateY(-1px); }
 nav.pillars a:hover::after { color: inherit; }
+.pay-box { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.pay-title { margin: 0; font-weight: 600; color: var(--title); }
+.pay-box .btn { justify-self: stretch; text-align: center; }
+.pay-box .btn[disabled] { opacity: .6; cursor: wait; }
+.pay-msg { margin: 0; font-size: .9rem; color: var(--ink-soft); min-height: 1em; }
+.pay-msg:empty { display: none; }
