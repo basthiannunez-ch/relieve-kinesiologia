@@ -1,18 +1,5 @@
 {
   "cleanUrls": true,
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "relieve-kinesiologia.vercel.app"
-        }
-      ],
-      "destination": "https://kinesiologiarelieve.cl/:path*",
-      "permanent": true
-    }
-  ],
   "regions": [
     "gru1"
   ],
