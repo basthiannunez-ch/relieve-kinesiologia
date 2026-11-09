@@ -85,3 +85,21 @@ if (INSTAGRAM && ig) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/";
 })();
 
 document.getElementById("year").textContent = new Date().getFullYear();
+
+// Globo "¿Necesitas ayuda?" junto al botón de WhatsApp
+(function () {
+  const wa = document.querySelector(".wa-float");
+  if (!wa) return;
+  try { if (sessionStorage.getItem("wa-globo-cerrado")) return; } catch (e) {}
+  const g = document.createElement("div");
+  g.className = "wa-bubble";
+  const a = document.createElement("a");
+  a.href = wa.href; a.target = "_blank"; a.rel = "noopener";
+  a.innerHTML = "<span>¿Necesitas ayuda?</span><b>Chatea con nosotros</b>";
+  const x = document.createElement("button");
+  x.type = "button"; x.setAttribute("aria-label", "Cerrar aviso"); x.textContent = "×";
+  x.onclick = () => { g.remove(); try { sessionStorage.setItem("wa-globo-cerrado", "1"); } catch (e) {} };
+  g.append(a, x);
+  document.body.append(g);
+  setTimeout(() => g.classList.add("show"), 1500);
+})();
