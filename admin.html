@@ -59,6 +59,16 @@
   .hours button.busy { background: #EFE6D6; color: var(--ink); border: 1px solid var(--arena); cursor: default; }
   .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--soft); }
   .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 6px; vertical-align: -1px; }
+  details.daybox > summary { cursor: pointer; list-style: none; }
+  details.daybox > summary::-webkit-details-marker { display: none; }
+  details.daybox > summary b { color: var(--verde); font-weight: 500; }
+  .nueva { display: grid; gap: 12px; margin-top: 14px; }
+  .nueva label { display: grid; gap: 4px; font-size: .9rem; color: var(--soft); flex: 1 1 160px; }
+  .nueva input, .nueva select { font: inherit; color: var(--ink); padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); min-width: 0; width: 100%; }
+  .nueva-items { display: grid; gap: 8px; }
+  .nueva-item { display: grid; grid-template-columns: 1fr 72px auto; gap: 8px; align-items: center; }
+  .nueva-item button { padding: 8px 12px; }
+  #nueva-mas { justify-self: start; }
   .daybox { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 12px; }
 </style>
 </head>
@@ -84,6 +94,25 @@
   </nav>
 
   <section id="reservas" hidden>
+    <div class="sec">
+      <details class="daybox" id="nueva">
+        <summary><b>+ Agregar reserva</b> <span class="hint">(si te piden hora en persona, por teléfono o WhatsApp)</span></summary>
+        <form class="nueva" id="nueva-form">
+          <label>Nombre del cliente<input name="nombre" required maxlength="60" autocomplete="off"></label>
+          <label>Teléfono (opcional)<input name="telefono" type="tel" maxlength="30" autocomplete="off"></label>
+          <div class="nueva-items" id="nueva-items"></div>
+          <button type="button" class="ghost" id="nueva-mas">+ Otro servicio</button>
+          <div class="row">
+            <label>Día<input name="fecha" type="date" required></label>
+            <label>Hora<select name="hora" required></select></label>
+          </div>
+          <label>Nota (opcional)<input name="nota" maxlength="400" autocomplete="off"></label>
+          <p class="hint" id="nueva-info"></p>
+          <div class="row"><button type="submit">Guardar reserva</button></div>
+          <p class="hint" id="nueva-msg" role="status"></p>
+        </form>
+      </details>
+    </div>
     <div class="sec">
       <h2>Por confirmar <span class="count" id="n-rp">0</span></h2>
       <p class="hint">Las reservas que hacen los clientes desde la página quedan aquí hasta que las aceptes. Mientras tanto, esa hora no se le ofrece a nadie más.</p>
@@ -125,6 +154,7 @@
     </div>
   </section>
 </div>
+<script src="catalogo.js"></script>
 <script>
   const $ = (id) => document.getElementById(id);
   let KEY = "";
@@ -216,6 +246,8 @@
   async function cargarAgenda() {
     AG = await agApi("GET");
     if (!MES) MES = AG.hoy.slice(0, 7);
+    NF.fecha.min = AG.hoy; NF.fecha.max = AG.fin; if (!NF.fecha.value) NF.fecha.value = AG.hoy;
+    horasNueva();
     pintarReservas(); pintarCal(); if (DIA) abrirDia(DIA);
   }
 
@@ -227,7 +259,7 @@
 
   function tarjetaReserva(r) {
     const el = document.createElement("article"); el.className = "item";
-    const tag = document.createElement("span"); tag.className = "tag" + (r.estado === "aceptada" ? " ok" : ""); tag.textContent = r.estado === "aceptada" ? "Aceptada" : "Por confirmar";
+    const tag = document.createElement("span"); tag.className = "tag" + (r.estado === "aceptada" ? " ok" : ""); tag.textContent = r.estado === "aceptada" ? (r.origen === "panel" ? "Agregada por ti" : "Aceptada") : "Por confirmar";
     const when = document.createElement("div"); when.className = "when"; when.textContent = fechaLarga(r.fecha) + " · " + rango(r.hora, r.bloques);
     const m = document.createElement("div"); m.className = "meta";
     const b = document.createElement("b"); b.textContent = r.nombre || "(sin nombre)";
@@ -333,6 +365,49 @@
     catch (e) { $("day-msg").textContent = "No se pudo guardar: " + e.message; }
     b.disabled = false;
   };
+  // ---------- Agregar reserva desde el panel ----------
+  const NF = $("nueva-form");
+  function filaServicio(id) {
+    const row = document.createElement("div"); row.className = "nueva-item";
+    const sel = document.createElement("select"); sel.setAttribute("aria-label", "Servicio");
+    const grupos = {};
+    (window.CATALOGO || []).forEach((s) => { const g = grupos[s.cat] ||= Object.assign(document.createElement("optgroup"), { label: (window.CATEGORIAS[s.cat] || {}).nombre || s.cat }); g.append(new Option(s.nombre + " (" + s.min + " min)", s.id)); });
+    Object.values(grupos).forEach((g) => sel.append(g));
+    if (id) sel.value = id;
+    const q = document.createElement("input"); q.type = "number"; q.min = 1; q.max = 10; q.value = 1; q.setAttribute("aria-label", "Cantidad");
+    const x = document.createElement("button"); x.type = "button"; x.className = "ghost"; x.textContent = "Quitar"; x.onclick = () => { if ($("nueva-items").children.length > 1) { row.remove(); horasNueva(); } };
+    sel.onchange = q.oninput = horasNueva;
+    row.append(sel, q, x); $("nueva-items").append(row);
+  }
+  const itemsNueva = () => [...$("nueva-items").children].map((r) => ({ id: r.querySelector("select").value, qty: Number(r.querySelector("input").value) || 1 }));
+  function horasNueva() {
+    if (!AG) return;
+    const n = calcularBloques(itemsNueva()).bloques;
+    const f = NF.fecha.value; const sel = NF.hora; const prev = sel.value; sel.replaceChildren();
+    const occ = f ? ocupadas(f) : new Map(); const abiertas = new Set((AG.horas[f] || []));
+    for (let h = AG.min; h + n - 1 <= AG.max; h++) {
+      let libre = true; for (let k = 0; k < n; k++) if (occ.has(h + k)) libre = false;
+      if (!libre) continue;
+      const o = new Option(rango(h, n) + (abiertas.has(h) ? "" : " (fuera de horario)"), h); sel.append(o);
+    }
+    if ([...sel.options].some((o) => o.value === prev)) sel.value = prev;
+    $("nueva-info").textContent = "Usa " + (n === 1 ? "1 hora" : n + " horas seguidas") + " (cada sesión + 10 min de margen). Solo aparecen las horas que no están ocupadas.";
+  }
+  $("nueva-mas").onclick = () => { filaServicio(); horasNueva(); };
+  NF.fecha.onchange = horasNueva;
+  NF.onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = NF.querySelector("button[type=submit]"); btn.disabled = true; $("nueva-msg").textContent = "Guardando…";
+    try {
+      await agApi("POST", { accion: "crear", nombre: NF.nombre.value, telefono: NF.telefono.value, nota: NF.nota.value, fecha: NF.fecha.value, hora: Number(NF.hora.value), items: itemsNueva() });
+      const f = NF.fecha.value; NF.reset(); $("nueva-items").replaceChildren(); filaServicio(); NF.fecha.value = f;
+      await cargarAgenda(); horasNueva();
+      $("nueva-msg").textContent = "Listo, reserva guardada y esas horas quedaron bloqueadas en la página.";
+    } catch (err) { $("nueva-msg").textContent = "No se pudo guardar: " + err.message; }
+    btn.disabled = false;
+  };
+  filaServicio();
+
   const mover = (n) => { const [y, m] = MES.split("-").map(Number); const d = new Date(Date.UTC(y, m - 1 + n, 1)); MES = d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1); pintarCal(); };
   $("cal-prev").onclick = () => mover(-1); $("cal-next").onclick = () => mover(1);
 
