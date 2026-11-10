@@ -35,7 +35,7 @@ if (INSTAGRAM && ig) { ig.href = "https://www.instagram.com/" + INSTAGRAM + "/";
     const day = get("weekday").toLowerCase();
     const mins = parseInt(get("hour"), 10) * 60 + parseInt(get("minute"), 10);
     const sunday = day.startsWith("dom");
-    const open = !sunday && ((mins >= 540 && mins < 720) || (mins >= 1020 && mins < 1200));
+    const open = !sunday && ((mins >= 540 && mins < 840) || (mins >= 900 && mins < 1080));
     el.textContent = open ? "Abierto ahora" : sunday ? "Hoy domingo, cerrado. Escríbenos y coordinamos." : "Fuera de horario. Escríbenos y te respondemos apenas podamos.";
     el.classList.toggle("open", open);
     el.hidden = false;

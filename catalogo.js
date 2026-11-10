@@ -19,6 +19,7 @@ globalThis.CATALOGO = [
   { id: "reductivo", nombre: "Masaje reductivo con aparatología", detalle: "50 min · por sesión", precio: 35000, min: 50, cat: "kinestetica", claves: "reducir medidas figura abdomen celulitis bajar" },
   { id: "reductivo-12", nombre: "Pack 12 sesiones reductivas", detalle: "Con aparatología", precio: 250000, min: 50, cat: "kinestetica", claves: "reducir medidas figura pack paquete" },
   { id: "piedras", nombre: "Masaje con piedras calientes", detalle: "50 min", precio: 45000, min: 50, cat: "bienestar", claves: "relajacion calor estres" },
+  { id: "piedras-marinas", nombre: "Masaje con piedras calientes marinas", detalle: "50 min", precio: 50000, min: 50, cat: "bienestar", claves: "piedras marinas mar relajacion calor estres" },
   { id: "descontracturante", nombre: "Masaje descontracturante", detalle: "50 min", precio: 40000, min: 50, cat: "bienestar", claves: "contractura espalda cuello dolor tension nudos" },
   { id: "relajacion", nombre: "Masaje de relajación", detalle: "50 min", precio: 35000, min: 50, cat: "bienestar", claves: "relajante estres ansiedad dormir" },
   { id: "drenaje-linfatico", nombre: "Masaje de drenaje linfático", detalle: "50 min", precio: 35000, min: 50, cat: "bienestar", claves: "retencion liquidos piernas hinchazon" },

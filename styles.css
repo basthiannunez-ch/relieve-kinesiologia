@@ -466,6 +466,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .xp-tags { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .xp-tags li { padding: 4px 12px; border-radius: 999px; font-size: 0.92rem; background: var(--bg); border: 1px solid var(--line); color: var(--title); }
 .xp-note { margin: 18px 0 0; font-size: 1rem; color: var(--ink-soft); font-style: italic; }
+.xp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--line); }
+.xp-actions .btn-sm { padding: 10px 18px; font-size: 0.98rem; min-height: 0; }
+.xp { scroll-margin-top: 90px; } .price-card { scroll-margin-top: 90px; }
 .hero-jump { margin-top: 8px; }
 @media (min-width: 760px) {
   .xp-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
