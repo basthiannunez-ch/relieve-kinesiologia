@@ -270,7 +270,7 @@
     if (r.nota) { const n = document.createElement("p"); n.className = "meta"; n.textContent = "Nota: " + r.nota; el.append(n); }
     const row = document.createElement("div"); row.className = "row";
     const texto = r.estado === "aceptada"
-      ? "Hola " + r.nombre + ", te escribimos de relieve 🌿 Tu hora quedó confirmada para el " + fechaLarga(r.fecha) + " de " + rango(r.hora, r.bloques) + ". Recuerda el abono de $10.000 para reservar. ¡Te esperamos en Pasaje Bucanero casa #13, Coquimbo!"
+      ? "Hola " + r.nombre + ", te escribimos de relieve 🌿 Tu hora quedó confirmada para el " + fechaLarga(r.fecha) + " de " + rango(r.hora, r.bloques) + ". ¡Te esperamos en Pasaje Bucanero casa #13, Coquimbo!"
       : "Hola " + r.nombre + ", te escribimos de relieve 🌿 sobre tu reserva del " + fechaLarga(r.fecha) + " de " + rango(r.hora, r.bloques) + ".";
     const aw = document.createElement("a"); aw.href = "https://wa.me/" + wa(r.telefono) + "?text=" + encodeURIComponent(texto); aw.target = "_blank"; aw.rel = "noopener";
     aw.textContent = r.estado === "aceptada" ? "Enviar confirmación por WhatsApp" : "Escribirle por WhatsApp";
@@ -391,6 +391,7 @@
       const o = new Option(rango(h, n) + (abiertas.has(h) ? "" : " (fuera de horario)"), h); sel.append(o);
     }
     if ([...sel.options].some((o) => o.value === prev)) sel.value = prev;
+    else { const o = [...sel.options].find((x) => abiertas.has(Number(x.value))); if (o) sel.value = o.value; }
     $("nueva-info").textContent = "Usa " + (n === 1 ? "1 hora" : n + " horas seguidas") + " (cada sesión + 10 min de margen). Solo aparecen las horas que no están ocupadas.";
   }
   $("nueva-mas").onclick = () => { filaServicio(); horasNueva(); };
