@@ -7,7 +7,7 @@ import { list } from "@vercel/blob";
 
 export const ZONA = "America/Santiago";
 export const FIN = "2027-12-31";
-export const HORAS_BASE = [9, 10, 11, 17, 18, 19]; // lunes a sábado 9-12 y 17-20
+export const HORAS_BASE = [9, 10, 11, 12, 13, 15, 16, 17]; // lunes a sábado 9-14 y 15-18
 export const HORA_MIN = 8, HORA_MAX = 20;          // la dueña puede abrir bloques desde las 8:00 hasta las 20:00 (termina 21:00)
 export const AVISO_HORAS = 24;                      // se reserva con al menos 24 h de anticipación
 

@@ -39,6 +39,6 @@ globalThis.MARGEN_MIN = 10;
 globalThis.calcularBloques = function (items) {
   const byId = Object.fromEntries(globalThis.CATALOGO.map((s) => [s.id, s]));
   let minutos = 0;
-  for (const i of items || []) { const s = byId[i && i.id]; const q = Math.max(0, parseInt(i && i.qty, 10) || 0); if (s) minutos += (s.min + globalThis.MARGEN_MIN) * q; }
+  for (const i of items || []) { const s = byId[i && i.id]; const q = Math.max(0, parseInt(i && i.qty, 10) || 0); if (s) minutos += ((s.min || 50) + globalThis.MARGEN_MIN) * q; }
   return { minutos, bloques: Math.max(1, Math.ceil(minutos / 60)) };
 };
