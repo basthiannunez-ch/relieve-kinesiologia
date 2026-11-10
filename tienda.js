@@ -116,7 +116,7 @@
     });
     const tot = el("div", "cart-total"); tot.append(el("span", null, "Total"), el("b", null, clp(total())));
     const { bloques } = calcularBloques(cart);
-    const note = el("p", "cart-note", "Tu pedido usa " + (bloques === 1 ? "1 hora" : bloques + " horas") + " de agenda (incluye 10 min de preparación por sesión). Elige día y hora; te confirmamos por WhatsApp. Cada servicio se reserva con un abono de $10.000.");
+    const note = el("p", "cart-note", "Tu pedido usa " + (bloques === 1 ? "1 hora" : bloques + " horas") + " de agenda (incluye 10 min de preparación por sesión). Elige día y hora y te la confirmamos por WhatsApp.");
     const bAgenda = el("button", "btn btn-main cart-send", "Elegir día y hora"); bAgenda.type = "button";
     bAgenda.onclick = () => { C.close(); abrirAgenda(); };
     const send = el("a", "btn btn-ghost cart-send", "Prefiero coordinar por WhatsApp");
@@ -225,8 +225,8 @@
     const [lO, iO] = campo("Algo que debamos saber (opcional)", { tag: "textarea", name: "nota", rows: 2, maxLength: 400 });
     const trampa = el("input"); trampa.name = "sitio"; trampa.tabIndex = -1; trampa.autocomplete = "off"; trampa.className = "t-trap"; trampa.setAttribute("aria-hidden", "true");
     const msg = el("p", "pay-msg"); msg.setAttribute("role", "status");
-    const go = el("button", "btn btn-main cart-send", "Solicitar reserva · " + pad(hora) + ":00"); go.type = "submit";
-    form.append(lN, lT, lO, trampa, el("p", "cart-note", "Tu hora queda apartada y la confirmamos por WhatsApp. Se reserva con un abono de $10.000 por servicio; si avisas con 24 horas puedes reagendar o recuperar el abono."), go, msg);
+    const go = el("button", "btn btn-main cart-send", "Agendar · " + pad(hora) + ":00"); go.type = "submit";
+    form.append(lN, lT, lO, trampa, el("p", "cart-note", "Al agendar, esa hora queda reservada para ti. Si avisas con 24 horas de anticipación puedes reagendar o recuperar tu pago."), go, msg);
     form.onsubmit = async (e) => {
       e.preventDefault(); go.disabled = true; msg.textContent = "Enviando…";
       try {
@@ -248,11 +248,27 @@
     const lines = cart.map((i) => "• " + i.qty + " x " + byId[i.id].nombre);
     const cuando = fechaLarga(out.fecha) + " de " + out.desde + " a " + out.hasta;
     rBody.replaceChildren(
-      el("p", "pay-title", "¡Listo, " + nombre.split(" ")[0] + "! Tu solicitud quedó registrada."),
-      el("p", "cart-note", cuando + ". Apartamos esa hora para ti y te escribiremos por WhatsApp para confirmarla."),
-      waLink("Hola relieve, acabo de solicitar una hora para el " + cuando + " 🌿\n" + lines.join("\n") + "\nTotal: " + clp(total()) + "\n¿Cómo pago el abono?", "Avisar y pagar el abono por WhatsApp")
+      el("p", "pay-title", "¡Listo, " + nombre.split(" ")[0] + "! Tu hora quedó agendada."),
+      el("p", "cart-note", cuando + ". Esa hora ya es tuya; te escribiremos por WhatsApp con la confirmación.")
     );
-    if (pagoActivo) { const b = el("button", "btn btn-ghost cart-send", "Pagar en línea con Mercado Pago"); b.type = "button"; b.onclick = () => { R.close(); renderCart(); open(C); }; rBody.append(b); }
+    const waTxt = "Hola relieve, acabo de agendar una hora para el " + cuando + " 🌿\n" + lines.join("\n") + "\nTotal: " + clp(total()) + "\n¿Cómo hago el pago?";
+    if (pagoActivo) {
+      const b = el("button", "btn btn-main cart-send", "Pagar total · " + clp(total())); b.type = "button";
+      const msg = el("p", "pay-msg"); msg.setAttribute("role", "status");
+      b.onclick = async () => {
+        b.disabled = true; msg.textContent = "Abriendo Mercado Pago…";
+        try {
+          const r = await fetch("/api/pago", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ modo: "total", items: cart, reserva: out.id }) });
+          const o = await r.json().catch(() => ({}));
+          if (!r.ok || !o.url) throw new Error(o.error || "No pudimos iniciar el pago.");
+          location.href = o.url;
+        } catch (e) { msg.textContent = e.message; b.disabled = false; }
+      };
+      rBody.append(el("p", "cart-note", "Paga ahora el total en línea con Mercado Pago y tu hora queda lista."), b, msg, waLink(waTxt, "Prefiero pagar por WhatsApp"));
+      rBody.lastChild.className = "btn btn-ghost cart-send";
+    } else {
+      rBody.append(el("p", "cart-note", "Te enviaremos los datos para pagar por WhatsApp."), waLink(waTxt, "Avisar por WhatsApp"));
+    }
   }
 
   // ---- Aviso ----

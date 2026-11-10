@@ -31,6 +31,7 @@ export default async function handler(req, res) {
     .slice(0, 30);
   if (!items.length) return json(res, 400, { error: "El carrito está vacío." });
 
+  const reserva = /^[a-z0-9]{6,24}$/.test(String(body.reserva || "")) ? String(body.reserva) : "";
   const unidades = items.reduce((t, i) => t + i.qty, 0);
   const detalle = items.map((i) => i.qty + " x " + i.s.nombre).join(", ").slice(0, 240);
   const mpItems = body.modo === "abono"
@@ -44,8 +45,8 @@ export default async function handler(req, res) {
     back_urls: { success: base + "/?pago=ok", failure: base + "/?pago=error", pending: base + "/?pago=pendiente" },
     auto_return: "approved",
     statement_descriptor: "RELIEVE",
-    external_reference: (body.modo === "abono" ? "abono" : "total") + "-" + Date.now(),
-    metadata: { modo: body.modo === "abono" ? "abono" : "total", detalle },
+    external_reference: (body.modo === "abono" ? "abono" : "total") + "-" + (reserva || Date.now()),
+    metadata: { modo: body.modo === "abono" ? "abono" : "total", detalle, reserva },
   };
   try {
     const r = await fetch("https://api.mercadopago.com/checkout/preferences", {
