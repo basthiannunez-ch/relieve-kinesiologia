@@ -1,4 +1,4 @@
-// Carrito de servicios y buscador. El pedido se envía por WhatsApp (el pago en línea vendrá más adelante).
+// Carrito de servicios, buscador y reserva de día y hora (agenda en /api/agenda).
 (function () {
   const CAT = window.CATALOGO || [];
   const CATS = window.CATEGORIAS || {};
@@ -41,7 +41,7 @@
   }
   let last = null;
   const open = (p, focusEl) => { last = document.activeElement; p.wrap.hidden = false; document.documentElement.classList.add("sheet-open"); (focusEl || p.box.querySelector("button")).focus(); };
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") [S, C].forEach((p) => { if (!p.wrap.hidden) p.close(); }); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") [S, C, R].forEach((p) => { if (!p.wrap.hidden) p.close(); }); });
 
   // ---- Buscador ----
   const S = panel("buscador", "Buscar servicios");
@@ -115,8 +115,11 @@
       list.append(row);
     });
     const tot = el("div", "cart-total"); tot.append(el("span", null, "Total"), el("b", null, clp(total())));
-    const note = el("p", "cart-note", "Te confirmamos día y hora por WhatsApp. Cada hora se reserva con un abono de $10.000.");
-    const send = el("a", "btn btn-main cart-send", "Enviar pedido por WhatsApp");
+    const { bloques } = calcularBloques(cart);
+    const note = el("p", "cart-note", "Tu pedido usa " + (bloques === 1 ? "1 hora" : bloques + " horas") + " de agenda (incluye 10 min de preparación por sesión). Elige día y hora; te confirmamos por WhatsApp. Cada servicio se reserva con un abono de $10.000.");
+    const bAgenda = el("button", "btn btn-main cart-send", "Elegir día y hora"); bAgenda.type = "button";
+    bAgenda.onclick = () => { C.close(); abrirAgenda(); };
+    const send = el("a", "btn btn-ghost cart-send", "Prefiero coordinar por WhatsApp");
     const lines = cart.map((i) => "• " + i.qty + " x " + byId[i.id].nombre + " (" + clp(byId[i.id].precio * i.qty) + ")");
     send.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Hola relieve, quiero agendar estos servicios 🌿\n" + lines.join("\n") + "\nTotal: " + clp(total()) + "\n¿Qué horarios tienen disponibles?");
     send.target = "_blank"; send.rel = "noopener";
@@ -139,12 +142,118 @@
       bAbono.onclick = () => go("abono", bAbono); bTotal.onclick = () => go("total", bTotal);
       pay.append(bAbono, bTotal, el("p", "cart-note", "El abono es de $10.000 por cada servicio y reserva tu hora; el resto se paga en la consulta."), msg);
       foot.append(pay);
-      send.className = "btn btn-ghost cart-send"; send.textContent = "O coordina por WhatsApp";
     }
     const clear = el("button", "link-btn", "Vaciar carrito"); clear.type = "button"; clear.onclick = () => { cart = []; save(); renderCart(); };
-    foot.prepend(tot, note); foot.append(send, clear);
+    foot.prepend(tot, note, bAgenda); foot.append(send, clear);
   }
   bCart.onclick = () => { renderCart(); open(C); document.querySelector(".toast")?.classList.remove("show"); };
+
+
+  // ---- Agenda: elegir día y hora ----
+  const R = panel("agenda", "Elige día y hora");
+  const rBody = el("div", "agenda"); R.box.append(rBody);
+  const pad = (n) => String(n).padStart(2, "0");
+  const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const dow = (f) => new Date(f + "T12:00:00Z").getUTCDay();
+  const fechaLarga = (f) => { const [y, m, d] = f.split("-").map(Number); return DIAS[dow(f)] + " " + d + " de " + MESES[m - 1] + " de " + y; };
+  let AG = null, mes = null, dia = null, hora = null;
+  const inicios = (f, n) => { const l = (AG.libres[f] || []); return l.filter((h) => { for (let k = 0; k < n; k++) if (!l.includes(h + k)) return false; return true; }); };
+
+  async function abrirAgenda() {
+    open(R); dia = null; hora = null;
+    rBody.replaceChildren(el("p", "search-hint", "Cargando horas disponibles…"));
+    try {
+      const r = await fetch("/api/agenda");
+      if (!r.ok) throw new Error();
+      AG = await r.json();
+      const n = calcularBloques(cart).bloques;
+      const primero = Object.keys(AG.libres).sort().find((f) => inicios(f, n).length);
+      mes = (primero || new Date().toISOString()).slice(0, 7);
+      pintarAgenda();
+    } catch (e) {
+      rBody.replaceChildren(el("p", "search-hint", "No pudimos cargar la agenda. Escríbenos por WhatsApp y te ayudamos a elegir tu hora."), waLink("Hola relieve, quiero agendar una hora 🌿"));
+    }
+  }
+  function waLink(texto, label) { const a = el("a", "btn btn-main cart-send", label || "Escribir por WhatsApp"); a.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(texto); a.target = "_blank"; a.rel = "noopener"; return a; }
+
+  function pintarAgenda() {
+    const n = calcularBloques(cart).bloques;
+    rBody.replaceChildren();
+    if (!cart.length) { rBody.append(el("p", "search-hint", "Primero agrega servicios al carrito.")); return; }
+    rBody.append(el("p", "cart-note", "Tu reserva usa " + (n === 1 ? "1 hora" : n + " horas seguidas") + ". Los días marcados tienen horas libres."));
+    const [y, m] = mes.split("-").map(Number);
+    const nav = el("div", "cal-nav");
+    const prev = el("button", "tool-btn", "‹"); prev.type = "button"; prev.setAttribute("aria-label", "Mes anterior");
+    const next = el("button", "tool-btn", "›"); next.type = "button"; next.setAttribute("aria-label", "Mes siguiente");
+    const hoyMes = new Date().toISOString().slice(0, 7);
+    prev.disabled = mes <= hoyMes; next.disabled = mes >= AG.fin.slice(0, 7);
+    const mover = (k) => { const d = new Date(Date.UTC(y, m - 1 + k, 1)); mes = d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1); dia = null; hora = null; pintarAgenda(); };
+    prev.onclick = () => mover(-1); next.onclick = () => mover(1);
+    nav.append(prev, el("b", null, MESES[m - 1] + " " + y), next);
+    const cal = el("div", "cal");
+    ["Lu", "Ma", "Mi", "Ju", "Vi", "Sá", "Do"].forEach((d) => cal.append(el("span", "dow", d)));
+    for (let i = 0, v = (dow(mes + "-01") + 6) % 7; i < v; i++) cal.append(el("span"));
+    const nDias = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    for (let d = 1; d <= nDias; d++) {
+      const f = mes + "-" + pad(d);
+      const b = el("button", "cal-day" + (f === dia ? " sel" : ""), d); b.type = "button";
+      const ok = inicios(f, n).length > 0;
+      b.disabled = !ok;
+      b.setAttribute("aria-label", fechaLarga(f) + (ok ? "" : ", sin horas libres"));
+      if (f === dia) b.setAttribute("aria-pressed", "true");
+      b.onclick = () => { dia = f; hora = null; pintarAgenda(); rBody.querySelector(".cal-hours")?.scrollIntoView({ block: "nearest", behavior: "smooth" }); };
+      cal.append(b);
+    }
+    rBody.append(nav, cal);
+    if (!Object.keys(AG.libres).some((f) => f.startsWith(mes) && inicios(f, n).length)) rBody.append(el("p", "search-hint", "No quedan horas libres este mes. Prueba el mes siguiente."));
+    if (!dia) return;
+    rBody.append(el("p", "pay-title", fechaLarga(dia)));
+    const hs = el("div", "cal-hours");
+    inicios(dia, n).forEach((h) => {
+      const b = el("button", "cal-hour" + (h === hora ? " sel" : ""), pad(h) + ":00 – " + pad(h + n) + ":00"); b.type = "button";
+      b.setAttribute("aria-pressed", String(h === hora));
+      b.onclick = () => { hora = h; pintarAgenda(); rBody.querySelector(".book-form input")?.focus(); };
+      hs.append(b);
+    });
+    rBody.append(hs);
+    if (hora == null) return;
+    const form = el("form", "book-form");
+    const campo = (lab, attrs) => { const l = el("label", null, lab); const i = el(attrs.tag || "input"); Object.assign(i, attrs); delete i.tag; l.append(i); return [l, i]; };
+    const [lN, iN] = campo("Tu nombre", { name: "nombre", required: true, autocomplete: "name", maxLength: 60 });
+    const [lT, iT] = campo("Tu WhatsApp", { name: "telefono", type: "tel", required: true, autocomplete: "tel", placeholder: "+56 9 …", maxLength: 30 });
+    const [lO, iO] = campo("Algo que debamos saber (opcional)", { tag: "textarea", name: "nota", rows: 2, maxLength: 400 });
+    const trampa = el("input"); trampa.name = "sitio"; trampa.tabIndex = -1; trampa.autocomplete = "off"; trampa.className = "t-trap"; trampa.setAttribute("aria-hidden", "true");
+    const msg = el("p", "pay-msg"); msg.setAttribute("role", "status");
+    const go = el("button", "btn btn-main cart-send", "Solicitar reserva · " + pad(hora) + ":00"); go.type = "submit";
+    form.append(lN, lT, lO, trampa, el("p", "cart-note", "Tu hora queda apartada y la confirmamos por WhatsApp. Se reserva con un abono de $10.000 por servicio; si avisas con 24 horas puedes reagendar o recuperar el abono."), go, msg);
+    form.onsubmit = async (e) => {
+      e.preventDefault(); go.disabled = true; msg.textContent = "Enviando…";
+      try {
+        const r = await fetch("/api/agenda", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: cart, fecha: dia, hora, nombre: iN.value, telefono: iT.value, nota: iO.value, sitio: trampa.value }) });
+        const out = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          msg.textContent = out.error || "No pudimos guardar tu reserva.";
+          go.disabled = false;
+          if (r.status === 409) { const x = await fetch("/api/agenda?t=" + Date.now()).then((y) => y.json()).catch(() => null); if (x) { AG = x; hora = null; setTimeout(pintarAgenda, 1600); } }
+          return;
+        }
+        listo(out, iN.value);
+      } catch (err) { msg.textContent = "No pudimos guardar tu reserva. Intenta de nuevo o escríbenos por WhatsApp."; go.disabled = false; }
+    };
+    rBody.append(form);
+  }
+
+  function listo(out, nombre) {
+    const lines = cart.map((i) => "• " + i.qty + " x " + byId[i.id].nombre);
+    const cuando = fechaLarga(out.fecha) + " de " + out.desde + " a " + out.hasta;
+    rBody.replaceChildren(
+      el("p", "pay-title", "¡Listo, " + nombre.split(" ")[0] + "! Tu solicitud quedó registrada."),
+      el("p", "cart-note", cuando + ". Apartamos esa hora para ti y te escribiremos por WhatsApp para confirmarla."),
+      waLink("Hola relieve, acabo de solicitar una hora para el " + cuando + " 🌿\n" + lines.join("\n") + "\nTotal: " + clp(total()) + "\n¿Cómo pago el abono?", "Avisar y pagar el abono por WhatsApp")
+    );
+    if (pagoActivo) { const b = el("button", "btn btn-ghost cart-send", "Pagar en línea con Mercado Pago"); b.type = "button"; b.onclick = () => { R.close(); renderCart(); open(C); }; rBody.append(b); }
+  }
 
   // ---- Aviso ----
   const t = el("div", "toast"); t.setAttribute("role", "status"); document.body.append(t);

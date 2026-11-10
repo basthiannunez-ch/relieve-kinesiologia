@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Testimonios · Panel privado</title>
+<title>Panel privado · relieve</title>
 <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Jost:wght@400;500&display=swap">
 <style>
@@ -32,13 +32,41 @@
   .msg { color: var(--rojo); font-weight: 500; min-height: 1.4em; }
   .hint { color: var(--soft); font-size: .9rem; margin: 0; }
   a { color: var(--verde); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tabs button { background: none; border: 1px solid var(--line); color: var(--ink); }
+  .tabs button[aria-selected="true"] { background: var(--verde); border-color: var(--verde); color: var(--bg); }
+  .sec { display: grid; gap: 12px; }
+  .sec + .sec { margin-top: 28px; }
+  .tag { font-size: .8rem; font-weight: 500; border-radius: 999px; padding: 2px 10px; background: #EFE6D6; color: var(--ink); justify-self: start; }
+  .tag.ok { background: #DDE5D5; color: var(--verde); }
+  .when { font-family: "Fraunces", Georgia, serif; font-size: 1.25rem; color: var(--verde); }
+  .cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cal-nav b { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-size: 1.3rem; color: var(--verde); text-transform: capitalize; }
+  .cal-nav button { padding: 8px 14px; }
+  .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+  .cal .dow { text-align: center; font-size: .8rem; color: var(--soft); }
+  .cal button.day { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 8px 2px; display: grid; gap: 2px; justify-items: center; font-size: 1rem; min-height: 58px; }
+  .cal button.day small { font-size: .72rem; color: var(--soft); line-height: 1.2; }
+  .cal button.day.cerrado { background: transparent; color: var(--soft); }
+  .cal button.day.res small { color: var(--rojo); font-weight: 500; }
+  .cal button.day.sel { outline: 2px solid var(--verde); outline-offset: 1px; }
+  .cal button.day[disabled] { opacity: .35; cursor: default; }
+  .cal button.day.blank { visibility: hidden; }
+  .msg:empty { display: none; }
+  .hours { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+  .hours button { background: var(--card); color: var(--soft); border: 1px dashed var(--line); border-radius: 12px; padding: 10px 6px; font-size: .95rem; }
+  .hours button.on { background: var(--verde); color: var(--bg); border: 1px solid var(--verde); }
+  .hours button.busy { background: #EFE6D6; color: var(--ink); border: 1px solid var(--arena); cursor: default; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--soft); }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 6px; vertical-align: -1px; }
+  .daybox { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 12px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Testimonios</h1>
-    <p class="hint">Panel privado de relieve. Aprueba lo que quieres que se vea en la página y elimina el resto. <a href="/">Volver a la página</a></p>
+    <h1>Panel de relieve</h1>
+    <p class="hint">Panel privado. Aquí aceptas reservas, marcas tus horas disponibles y apruebas testimonios. <a href="/">Volver a la página</a></p>
   </header>
 
   <form class="login" id="login">
@@ -49,13 +77,50 @@
   </form>
   <p class="msg" id="msg" role="status"></p>
 
+  <nav class="tabs" id="tabs" hidden role="tablist">
+    <button type="button" role="tab" data-tab="reservas" aria-selected="true">Reservas <span class="count" id="n-res">0</span></button>
+    <button type="button" role="tab" data-tab="horario" aria-selected="false">Mis horas disponibles</button>
+    <button type="button" role="tab" data-tab="panel" aria-selected="false">Testimonios <span class="count" id="n-pend-tab">0</span></button>
+  </nav>
+
+  <section id="reservas" hidden>
+    <div class="sec">
+      <h2>Por confirmar <span class="count" id="n-rp">0</span></h2>
+      <p class="hint">Las reservas que hacen los clientes desde la página quedan aquí hasta que las aceptes. Mientras tanto, esa hora no se le ofrece a nadie más.</p>
+      <div class="list" id="res-pend"></div>
+    </div>
+    <div class="sec">
+      <h2>Próximas aceptadas <span class="count" id="n-ra">0</span></h2>
+      <div class="list" id="res-ok"></div>
+    </div>
+  </section>
+
+  <section id="horario" hidden>
+    <div class="sec">
+      <p class="hint">Cada cuadro es un bloque de 1 hora. De lunes a sábado vienen abiertas las horas de atención (9 a 12 y 17 a 20). Toca un día, abre o cierra sus horas y guarda. Los clientes solo pueden reservar con 24 horas de anticipación.</p>
+      <div class="cal-nav"><button type="button" class="ghost" id="cal-prev" aria-label="Mes anterior">‹</button><b id="cal-mes"></b><button type="button" class="ghost" id="cal-next" aria-label="Mes siguiente">›</button></div>
+      <div class="cal" id="cal"></div>
+      <div class="legend"><span><i style="background:var(--verde)"></i>Abierta</span><span><i style="border:1px dashed var(--soft)"></i>Cerrada</span><span><i style="background:#EFE6D6;border:1px solid var(--arena)"></i>Reservada</span></div>
+      <div class="daybox" id="daybox" hidden>
+        <h2 id="day-title"></h2>
+        <div class="hours" id="day-hours"></div>
+        <div class="row">
+          <button type="button" id="day-save">Guardar este día</button>
+          <button type="button" class="ghost" id="day-base">Horario normal</button>
+          <button type="button" class="ghost" id="day-close">Cerrar todo el día</button>
+        </div>
+        <p class="hint" id="day-msg" role="status"></p>
+      </div>
+    </div>
+  </section>
+
   <section id="panel" hidden>
     <div style="display:grid;gap:12px">
-      <h2>Por revisar <span class="count" id="n-pend">0</span></h2>
+      <h2>Testimonios por revisar <span class="count" id="n-pend">0</span></h2>
       <div class="list" id="pendientes"></div>
     </div>
     <div style="display:grid;gap:12px;margin-top:32px">
-      <h2>Publicados <span class="count" id="n-apr">0</span></h2>
+      <h2>Testimonios publicados <span class="count" id="n-apr">0</span></h2>
       <div class="list" id="aprobados"></div>
     </div>
   </section>
@@ -97,23 +162,179 @@
     catch (e) { $("msg").textContent = e.message; row.querySelectorAll("button").forEach((b) => (b.disabled = false)); }
   }
 
+  async function cargarTestimonios() {
+    const { pendientes, aprobados } = await api("GET");
+    $("n-pend").textContent = pendientes.length; $("n-pend-tab").textContent = pendientes.length; $("n-apr").textContent = aprobados.length;
+    const P = $("pendientes"), A = $("aprobados"); P.replaceChildren(); A.replaceChildren();
+    if (!pendientes.length) P.innerHTML = '<p class="empty">No hay testimonios nuevos.</p>';
+    if (!aprobados.length) A.innerHTML = '<p class="empty">Todavía no hay testimonios publicados.</p>';
+    pendientes.forEach((t) => P.append(item(t, true)));
+    aprobados.forEach((t) => A.append(item(t, false)));
+  }
+
   async function cargar() {
     $("msg").textContent = "";
     try {
-      const { pendientes, aprobados } = await api("GET");
+      await Promise.all([cargarTestimonios(), cargarAgenda()]);
       try { sessionStorage.setItem("adm", KEY); } catch (e) {}
-      $("panel").hidden = false; $("salir").hidden = false; $("key").hidden = true; $("login").querySelector("button[type=submit]").hidden = true;
-      $("n-pend").textContent = pendientes.length; $("n-apr").textContent = aprobados.length;
-      const P = $("pendientes"), A = $("aprobados"); P.replaceChildren(); A.replaceChildren();
-      if (!pendientes.length) P.innerHTML = '<p class="empty">No hay testimonios nuevos.</p>';
-      if (!aprobados.length) A.innerHTML = '<p class="empty">Todavía no hay testimonios publicados.</p>';
-      pendientes.forEach((t) => P.append(item(t, true)));
-      aprobados.forEach((t) => A.append(item(t, false)));
+      $("tabs").hidden = false; $("salir").hidden = false; $("key").hidden = true; $("login").querySelector("button[type=submit]").hidden = true;
+      mostrar(TAB);
     } catch (e) {
-      $("panel").hidden = true;
+      ["panel", "reservas", "horario", "tabs"].forEach((id) => ($(id).hidden = true));
       $("msg").textContent = e.status === 401 ? "Clave incorrecta. Revísala e intenta de nuevo." : "No se pudo cargar: " + e.message;
     }
   }
+
+  // ---------- Pestañas ----------
+  let TAB = "reservas";
+  try { TAB = sessionStorage.getItem("adm-tab") || TAB; } catch (e) {}
+  function mostrar(tab) {
+    TAB = tab; try { sessionStorage.setItem("adm-tab", tab); } catch (e) {}
+    document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === tab)));
+    ["reservas", "horario", "panel"].forEach((id) => ($(id).hidden = id !== tab));
+  }
+  document.querySelectorAll("#tabs button").forEach((b) => (b.onclick = () => mostrar(b.dataset.tab)));
+
+  // ---------- Agenda ----------
+  let AG = null, MES = null, DIA = null, SEL = null;
+  const pad = (n) => String(n).padStart(2, "0");
+  const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const dow = (f) => new Date(f + "T12:00:00Z").getUTCDay();
+  const fechaLarga = (f) => { const [y, m, d] = f.split("-").map(Number); return DIAS[dow(f)] + " " + d + " de " + MESES[m - 1] + (y !== new Date().getFullYear() ? " de " + y : ""); };
+  const rango = (h, n) => pad(h) + ":00 a " + pad(h + n) + ":00";
+  const clp = (n) => "$" + Number(n || 0).toLocaleString("es-CL");
+  const wa = (tel) => { let d = String(tel || "").replace(/\D/g, ""); if (d.length === 9 && d[0] === "9") d = "56" + d; if (d.length === 8) d = "569" + d; return d; };
+
+  async function agApi(method, body) {
+    const r = await fetch("/api/agenda-admin", { method, headers: { "x-admin-key": KEY, "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
+    const out = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(out.error || "Error"), { status: r.status });
+    return out;
+  }
+
+  async function cargarAgenda() {
+    AG = await agApi("GET");
+    if (!MES) MES = AG.hoy.slice(0, 7);
+    pintarReservas(); pintarCal(); if (DIA) abrirDia(DIA);
+  }
+
+  function ocupadas(fecha) {
+    const s = new Map();
+    AG.reservas.filter((r) => r.fecha === fecha).forEach((r) => { for (let k = 0; k < r.bloques; k++) s.set(r.hora + k, r); });
+    return s;
+  }
+
+  function tarjetaReserva(r) {
+    const el = document.createElement("article"); el.className = "item";
+    const tag = document.createElement("span"); tag.className = "tag" + (r.estado === "aceptada" ? " ok" : ""); tag.textContent = r.estado === "aceptada" ? "Aceptada" : "Por confirmar";
+    const when = document.createElement("div"); when.className = "when"; when.textContent = fechaLarga(r.fecha) + " · " + rango(r.hora, r.bloques);
+    const m = document.createElement("div"); m.className = "meta";
+    const b = document.createElement("b"); b.textContent = r.nombre || "(sin nombre)";
+    m.append(b, document.createTextNode(" · " + (r.telefono || "") + (r.bloques > 1 ? " · " + r.bloques + " horas" : " · 1 hora")));
+    const p = document.createElement("p");
+    p.textContent = (r.items || []).map((i) => i.qty + " x " + i.nombre).join("\n") + (r.total ? "\nTotal: " + clp(r.total) : "") + (r.minutos ? " · " + r.minutos + " min con margen" : "");
+    el.append(tag, when, m, p);
+    if (r.nota) { const n = document.createElement("p"); n.className = "meta"; n.textContent = "Nota: " + r.nota; el.append(n); }
+    const row = document.createElement("div"); row.className = "row";
+    const texto = r.estado === "aceptada"
+      ? "Hola " + r.nombre + ", te escribimos de relieve 🌿 Tu hora quedó confirmada para el " + fechaLarga(r.fecha) + " de " + rango(r.hora, r.bloques) + ". Recuerda el abono de $10.000 para reservar. ¡Te esperamos en Pasaje Bucanero casa #13, Coquimbo!"
+      : "Hola " + r.nombre + ", te escribimos de relieve 🌿 sobre tu reserva del " + fechaLarga(r.fecha) + " de " + rango(r.hora, r.bloques) + ".";
+    const aw = document.createElement("a"); aw.href = "https://wa.me/" + wa(r.telefono) + "?text=" + encodeURIComponent(texto); aw.target = "_blank"; aw.rel = "noopener";
+    aw.textContent = r.estado === "aceptada" ? "Enviar confirmación por WhatsApp" : "Escribirle por WhatsApp";
+    if (r.estado !== "aceptada") {
+      const ok = document.createElement("button"); ok.textContent = "Aceptar reserva"; ok.onclick = () => accionReserva("aceptar", r, row);
+      row.append(ok);
+    }
+    const no = document.createElement("button"); no.className = "danger";
+    const label = r.estado === "aceptada" ? "Cancelar reserva" : "Rechazar";
+    no.textContent = label;
+    no.onclick = () => {
+      if (no.dataset.confirm) return accionReserva(r.estado === "aceptada" ? "cancelar" : "rechazar", r, row);
+      no.dataset.confirm = "1"; no.textContent = "Toca otra vez para confirmar";
+      setTimeout(() => { delete no.dataset.confirm; no.textContent = label; }, 4000);
+    };
+    row.append(no);
+    const waRow = document.createElement("p"); waRow.style.margin = "0"; waRow.append(aw);
+    el.append(row, waRow);
+    return el;
+  }
+
+  async function accionReserva(accion, r, row) {
+    row.querySelectorAll("button").forEach((b) => (b.disabled = true));
+    try { await agApi("POST", { accion, url: r.url }); await cargarAgenda(); }
+    catch (e) { $("msg").textContent = e.message; row.querySelectorAll("button").forEach((b) => (b.disabled = false)); }
+  }
+
+  function pintarReservas() {
+    const pend = AG.reservas.filter((r) => r.estado === "pendiente" && r.fecha >= AG.hoy);
+    const ok = AG.reservas.filter((r) => r.estado === "aceptada" && r.fecha >= AG.hoy);
+    $("n-rp").textContent = pend.length; $("n-res").textContent = pend.length; $("n-ra").textContent = ok.length;
+    const P = $("res-pend"), A = $("res-ok"); P.replaceChildren(); A.replaceChildren();
+    if (!pend.length) P.innerHTML = '<p class="empty">No hay reservas nuevas.</p>';
+    if (!ok.length) A.innerHTML = '<p class="empty">No hay reservas aceptadas próximas.</p>';
+    pend.forEach((r) => P.append(tarjetaReserva(r)));
+    ok.forEach((r) => A.append(tarjetaReserva(r)));
+  }
+
+  function pintarCal() {
+    const [y, m] = MES.split("-").map(Number);
+    $("cal-mes").textContent = MESES[m - 1] + " " + y;
+    $("cal-prev").disabled = MES <= AG.hoy.slice(0, 7);
+    $("cal-next").disabled = MES >= AG.fin.slice(0, 7);
+    const C = $("cal"); C.replaceChildren();
+    ["Lu", "Ma", "Mi", "Ju", "Vi", "Sá", "Do"].forEach((d) => { const s = document.createElement("span"); s.className = "dow"; s.textContent = d; C.append(s); });
+    const primero = MES + "-01"; const vacios = (dow(primero) + 6) % 7;
+    for (let i = 0; i < vacios; i++) { const b = document.createElement("button"); b.className = "day blank"; b.disabled = true; C.append(b); }
+    const nDias = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    for (let d = 1; d <= nDias; d++) {
+      const f = MES + "-" + pad(d);
+      const b = document.createElement("button"); b.type = "button"; b.className = "day";
+      const horas = AG.horas[f];
+      if (!horas) { b.disabled = true; b.textContent = d; C.append(b); continue; }
+      const nRes = new Set(AG.reservas.filter((r) => r.fecha === f).map((r) => r.id)).size;
+      const sm = document.createElement("small");
+      sm.textContent = nRes ? nRes + (nRes > 1 ? " reservas" : " reserva") : horas.length ? horas.length + " h" : "cerrado";
+      if (!horas.length) b.classList.add("cerrado");
+      if (nRes) b.classList.add("res");
+      if (f === DIA) b.classList.add("sel");
+      b.append(document.createTextNode(d), sm);
+      b.setAttribute("aria-label", fechaLarga(f) + ", " + sm.textContent);
+      b.onclick = () => abrirDia(f);
+      C.append(b);
+    }
+  }
+
+  function abrirDia(f) {
+    DIA = f; SEL = new Set(AG.horas[f] || []);
+    $("daybox").hidden = false; $("day-title").textContent = fechaLarga(f); $("day-msg").textContent = "";
+    pintarHoras(); pintarCal();
+  }
+  function pintarHoras() {
+    const H = $("day-hours"); H.replaceChildren();
+    const occ = ocupadas(DIA);
+    for (let h = AG.min; h <= AG.max; h++) {
+      const b = document.createElement("button"); b.type = "button";
+      const r = occ.get(h);
+      if (r) { b.className = "busy"; b.textContent = rango(h, 1) + " · " + (r.estado === "aceptada" ? "reservada" : "por confirmar"); b.title = r.nombre || ""; b.onclick = () => mostrar("reservas"); }
+      else {
+        b.className = SEL.has(h) ? "on" : ""; b.textContent = rango(h, 1);
+        b.setAttribute("aria-pressed", String(SEL.has(h)));
+        b.onclick = () => { SEL.has(h) ? SEL.delete(h) : SEL.add(h); $("day-msg").textContent = "Cambios sin guardar."; pintarHoras(); };
+      }
+      H.append(b);
+    }
+  }
+  $("day-base").onclick = () => { SEL = new Set(dow(DIA) === 0 ? [] : AG.base); $("day-msg").textContent = "Cambios sin guardar."; pintarHoras(); };
+  $("day-close").onclick = () => { SEL = new Set(); $("day-msg").textContent = "Cambios sin guardar."; pintarHoras(); };
+  $("day-save").onclick = async () => {
+    const b = $("day-save"); b.disabled = true; $("day-msg").textContent = "Guardando…";
+    try { const out = await agApi("POST", { accion: "dia", fecha: DIA, horas: [...SEL] }); AG.horas[DIA] = out.horas; $("day-msg").textContent = "Listo, guardado."; pintarCal(); }
+    catch (e) { $("day-msg").textContent = "No se pudo guardar: " + e.message; }
+    b.disabled = false;
+  };
+  const mover = (n) => { const [y, m] = MES.split("-").map(Number); const d = new Date(Date.UTC(y, m - 1 + n, 1)); MES = d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1); pintarCal(); };
+  $("cal-prev").onclick = () => mover(-1); $("cal-next").onclick = () => mover(1);
 
   $("login").addEventListener("submit", (e) => { e.preventDefault(); KEY = $("key").value.trim(); if (KEY) cargar(); });
   $("salir").onclick = () => { try { sessionStorage.removeItem("adm"); } catch (e) {} location.reload(); };
