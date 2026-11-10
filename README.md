@@ -6,3 +6,5 @@ Página web de la kinesióloga Javiera Miranda (Coquimbo). Sitio estático en HT
 - `styles.css`: estilos (celular primero, modo oscuro automático)
 - `script.js`: menú, botones de WhatsApp y aviso de horario. El número de WhatsApp y el Instagram se configuran en las dos primeras constantes.
 - `img/`: fotos y logos
+- `catalogo.js`: servicios, precios y minutos de cada sesión (los usa el carrito, el pago y la agenda)
+- `api/agenda.js`: horas libres y solicitudes de reserva. `api/agenda-admin.js`: la dueña abre o cierra horas y acepta o rechaza reservas desde `/admin` (misma clave ADMIN_KEY). Todo se guarda en Vercel Blob, carpeta `agenda/`.

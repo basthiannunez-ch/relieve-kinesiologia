@@ -604,3 +604,23 @@ nav.pillars a:hover::after { color: inherit; }
 .wa-bubble button:hover { background: #F1ECE2; }
 @media (prefers-reduced-motion: reduce) { .wa-bubble { transition: none; } }
 .page-hero h1 { font-size: clamp(2.1rem, 9.5vw, 3.8rem); overflow-wrap: anywhere; }
+
+/* ---- Agenda: elegir día y hora ---- */
+.agenda { display: grid; gap: 14px; }
+.agenda .cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.agenda .cal-nav b { font-family: var(--f-display); font-weight: 400; font-size: 1.4rem; color: var(--title); text-transform: capitalize; }
+.agenda .cal-nav .tool-btn { font-size: 1.5rem; line-height: 1; }
+.agenda .cal-nav .tool-btn[disabled] { opacity: .3; cursor: default; }
+.agenda .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.agenda .dow { text-align: center; font-size: 0.86rem; color: var(--ink-soft); }
+.cal-day { font: inherit; aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--accent); background: var(--surface); color: var(--title); font-weight: 500; cursor: pointer; padding: 0; }
+.cal-day:hover { background: var(--surface-2, #F1EADC); }
+.cal-day[disabled] { border-color: transparent; background: none; color: var(--ink-soft); opacity: .45; font-weight: 400; cursor: default; }
+.cal-day.sel, .cal-hour.sel { background: var(--btn); color: var(--btn-ink); border-color: var(--btn); }
+.cal-hours { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; }
+.cal-hour { font: inherit; font-weight: 500; padding: 11px 8px; border-radius: 12px; border: 1px solid var(--accent); background: var(--surface); color: var(--title); cursor: pointer; }
+.book-form { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.book-form label { display: grid; gap: 4px; font-weight: 500; color: var(--title); }
+.book-form input, .book-form textarea { font: inherit; font-weight: 400; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; width: 100%; }
+.book-form textarea { resize: vertical; }
+.book-form .btn[disabled] { opacity: .6; cursor: wait; }
