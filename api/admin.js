@@ -3,8 +3,9 @@ import { put, del } from "@vercel/blob";
 import { leerCarpeta, json, leerCuerpo } from "./_lib.js";
 
 export default async function handler(req, res) {
-  const clave = req.headers["x-admin-key"];
-  if (!process.env.ADMIN_KEY || clave !== process.env.ADMIN_KEY) return json(res, 401, { error: "Clave incorrecta" });
+  const clave = String(req.headers["x-admin-key"] || "").trim();
+  const real = String(process.env.ADMIN_KEY || "").trim(); // sin espacios ni saltos de línea pegados por error
+  if (!real || clave !== real) return json(res, 401, { error: "Clave incorrecta" });
   try {
     if (req.method === "GET") {
       const [pendientes, aprobados] = await Promise.all([leerCarpeta("pendientes/"), leerCarpeta("aprobados/")]);

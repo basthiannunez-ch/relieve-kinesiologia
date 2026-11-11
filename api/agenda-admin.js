@@ -9,8 +9,9 @@ import { leerAgenda, horasAbiertas, horasOcupadas, ahora, sumarDias, fechaValida
 const urlBlob = (u) => { try { return new URL(u).hostname.endsWith(".blob.vercel-storage.com"); } catch { return false; } };
 
 export default async function handler(req, res) {
-  const clave = req.headers["x-admin-key"];
-  if (!process.env.ADMIN_KEY || clave !== process.env.ADMIN_KEY) return json(res, 401, { error: "Clave incorrecta" });
+  const clave = String(req.headers["x-admin-key"] || "").trim();
+  const real = String(process.env.ADMIN_KEY || "").trim(); // sin espacios ni saltos de línea pegados por error
+  if (!real || clave !== real) return json(res, 401, { error: "Clave incorrecta" });
   try {
     if (req.method === "GET") {
       const ag = await leerAgenda();
